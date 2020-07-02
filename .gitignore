@@ -1,0 +1,16 @@
+*.pyc
+.DS_Store
+
+/.project
+/.pydevproject
+# checkpoint
+checkpoints/
+
+# For PyCharm users
+.idea/
+.git.bak
+__pycache__/
+temp/
+# !*/best.pth.tar
+#!chkpt/best.pth.tar
+#!checkpoints/best.pth.tar
