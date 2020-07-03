@@ -59,8 +59,8 @@ def chkptpit(max_iter=1000):
         desc1 = f"nnet-50_{i}"
         for desc2, player2 in players.items():
             arena = Arena.Arena(player1, player2, g, display=OthelloGame.display)
-            print(f"{desc1} vs {desc2}")
-            print(arena.playGames(2, display_result=True))
+            log.info(f"{desc1} vs {desc2}")
+            log.info(arena.playGames(2, display_result=True))
 
 
 chkptpit()
