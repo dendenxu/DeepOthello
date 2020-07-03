@@ -36,23 +36,24 @@ class NNetPlayer:
         self.mcts = MCTS(game, self.n, args)
 
     def play(self, board):
+        print("Hold on! The NNet is thinking...")
         return np.argmax(self.mcts.getActionProb(board, temp=0))
 
 
-chkpt1 = ('temp', 'best.pth.tar')
+chkpt1 = ('archive', 'archive_6x6_200.pth.tar')
 args1 = dotdict({'numMCTSSims': 200, 'cpuct': 1.0})
 
 n1p = NNetPlayer(g, args1, chkpt1).play
 
-chkpt2 = ('temp', 'best.pth.tar')
+chkpt2 = ('archive', 'archive_6x6_200.pth.tar')
 args2 = dotdict({'numMCTSSims': 500, 'cpuct': 1.0})
 
 n2p = NNetPlayer(g, args2, chkpt2).play
 
 
-arena = Arena.Arena(n1p, scp, g, display=OthelloGame.display)
+arena = Arena.Arena(n1p, hp, g, display=OthelloGame.display)
 
-print(arena.playGames(2, verbose=False, display_result=True))
+print(arena.playGames(2, verbose=True, display_result=True))
 
 # players = {
 #     "random": rp,
