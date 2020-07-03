@@ -8,10 +8,12 @@ from othello.pytorch.NNet import NNetWrapper as NNet
 import numpy as np
 from utils import *
 
+import os
 import logging
 
 import coloredlogs
 log = logging.getLogger(__name__)
+coloredlogs.install("INFO")
 """
 use this script to play any two agents against each other, or play manually with
 any agent.
@@ -38,33 +40,27 @@ class NNetPlayer:
     def play(self, board):
         return np.argmax(self.mcts.getActionProb(board, temp=0))
 
+def chkptpit(max_iter=1000):
+    players = {
+        "random": rp,
+        "greedy": gp,
+        "alphabeta-simple": sp,
+        "alphabeta-strategy": scp,
+    }
 
-chkpt1 = ('temp', 'best.pth.tar')
-args1 = dotdict({'numMCTSSims': 200, 'cpuct': 1.0})
+    for i in range(1, max_iter):
+        path = f"temp/checkpoint_{i}.pth.tar"
+        if not os.path.exists(path):
+            log.info("All iterations are done now.")
+            break
+        chkpt = path.split("/")
+        args = dotdict({'numMCTSSims': 50, 'cpuct': 1.0})
+        player1 = NNetPlayer(g, args, chkpt).play
+        desc1 = f"nnet-50_{i}"
+        for desc2, player2 in players.items():
+            arena = Arena.Arena(player1, player2, g, display=OthelloGame.display)
+            print(f"{desc1} vs {desc2}")
+            print(arena.playGames(2, display_result=True))
 
-n1p = NNetPlayer(g, args1, chkpt1).play
 
-chkpt2 = ('temp', 'best.pth.tar')
-args2 = dotdict({'numMCTSSims': 500, 'cpuct': 1.0})
-
-n2p = NNetPlayer(g, args2, chkpt2).play
-
-
-arena = Arena.Arena(n1p, scp, g, display=OthelloGame.display)
-
-print(arena.playGames(2, verbose=False, display_result=True))
-
-# players = {
-#     "random": rp,
-#     "greedy": gp,
-#     "alphabeta-simple": sp,
-#     "alphabeta-strategy": scp,
-#     "nnet-200": n1p,
-#     "nnet-500": n2p,
-# }
-
-# for desc1, player1 in players.items():
-#     for desc2, player2 in players.items():
-#         arena = Arena.Arena(player1, player2, g, display=OthelloGame.display)
-#         print(f"{desc1} vs {desc2}")
-#         print(arena.playGames(2, display_result=True))
+chkptpit()

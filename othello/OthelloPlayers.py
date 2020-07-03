@@ -69,12 +69,6 @@ class SimplePlayer:
         self.small_val = small_val  # A value small enough for alpha initialization
         self.depth = max_depth  # Max search depth of game tree
         self.max_width = max_width  # Max search width of game tree, not used in practice
-        self.weight = np.asarray([[150, -80, 10, 10, -80, 150],  # weight matrix of board position
-                                  [-80, -90, 5, 5, -90, -80],
-                                  [10, 5, 1, 1, 5, 10],
-                                  [10, 5, 1, 1, 5, 10],
-                                  [-80, -90, 5, 5, -90, -80],
-                                  [150, -80, 10, 10, -80, 150]])
 
     def play(self, board):
         _, result = self.alpha_beta(board, self.small_val, self.big_val, self.color, self.depth)

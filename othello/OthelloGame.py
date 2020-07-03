@@ -1,15 +1,16 @@
 from __future__ import print_function
+import numpy as np
+from .OthelloLogic import Board
+from Game import Game
 import sys
 sys.path.append('..')
-from Game import Game
-from .OthelloLogic import Board
-import numpy as np
+
 
 class OthelloGame(Game):
     square_content = {
-        -1: "X",
+        -1: "O",
         +0: "-",
-        +1: "O"
+        +1: "X"
     }
 
     @staticmethod
@@ -39,7 +40,7 @@ class OthelloGame(Game):
             return (board, -player)
         b = Board(self.n)
         b.pieces = np.copy(board)
-        move = (int(action/self.n), action%self.n)
+        move = (int(action/self.n), action % self.n)
         b.execute_move(move, player)
         return (b.pieces, -player)
 
@@ -48,12 +49,12 @@ class OthelloGame(Game):
         valids = [0]*self.getActionSize()
         b = Board(self.n)
         b.pieces = np.copy(board)
-        legalMoves =  b.get_legal_moves(player)
-        if len(legalMoves)==0:
-            valids[-1]=1
+        legalMoves = b.get_legal_moves(player)
+        if len(legalMoves) == 0:
+            valids[-1] = 1
             return np.array(valids)
         for x, y in legalMoves:
-            valids[self.n*x+y]=1
+            valids[self.n*x+y] = 1
         return np.array(valids)
 
     def getGameEnded(self, board, player):
@@ -115,5 +116,5 @@ class OthelloGame(Game):
                 piece = board[y][x]    # get the piece to print
                 print(OthelloGame.square_content[piece], end=" ")
             print("|")
-
+        print(f"Black: {np.sum(board==1)} | White: {np.sum(board==-1)}")
         print("-----------------------")
