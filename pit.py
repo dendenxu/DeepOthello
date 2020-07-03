@@ -28,20 +28,27 @@ sp = SimplePlayer(g).play
 scp = SingleCorePlayer(g).play
 
 
-
 # nnet players
-n1 = NNet(g)
-n1.load_checkpoint('./temp','best.pth.tar')
-args1 = dotdict({'numMCTSSims': 200, 'cpuct':1.0})
-mcts1 = MCTS(g, n1, args1)
-n1p = lambda x: np.argmax(mcts1.getActionProb(x, temp=0))
+class NNetPlayer:
+    def __init__(self, game, args, chkpt):
+        self.n = NNet(game)
+        self.n.load_checkpoint(chkpt[0], chkpt[1])
+        self.mcts = MCTS(game, self.n, args)
+
+    def play(self, board):
+        return np.argmax(self.mcts.getActionProb(board, temp=0))
 
 
-n2 = NNet(g)
-n2.load_checkpoint('./temp', 'best.pth.tar')
+chkpt1 = ('./temp', 'best.pth.tar')
+args1 = dotdict({'numMCTSSims': 200, 'cpuct': 1.0})
+
+n1p = NNetPlayer(g, args1, chkpt1).play
+
+chkpt2 = ('./temp', 'best.pth.tar')
 args2 = dotdict({'numMCTSSims': 500, 'cpuct': 1.0})
-mcts2 = MCTS(g, n2, args2)
-n2p = lambda x: np.argmax(mcts2.getActionProb(x, temp=0))
+
+n2p = NNetPlayer(g, args2, chkpt2).play
+
 
 arena = Arena.Arena(n1p, scp, g, display=OthelloGame.display)
 
