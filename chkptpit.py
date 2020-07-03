@@ -40,7 +40,8 @@ class NNetPlayer:
     def play(self, board):
         return np.argmax(self.mcts.getActionProb(board, temp=0))
 
-def chkptpit(max_iter=1000):
+
+def chkptpit(max_iter=1000, num_games=20):
     players = {
         "random": rp,
         "greedy": gp,
@@ -60,7 +61,7 @@ def chkptpit(max_iter=1000):
         for desc2, player2 in players.items():
             arena = Arena.Arena(player1, player2, g, display=OthelloGame.display)
             log.info(f"{desc1} vs {desc2}")
-            log.info(arena.playGames(2, display_result=True))
+            log.info(arena.playGames(num_games, display_result=True))
 
 
 chkptpit()
