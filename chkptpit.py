@@ -20,16 +20,6 @@ any agent.
 """
 
 
-g = OthelloGame(6)
-
-# all players
-rp = RandomPlayer(g).play
-gp = GreedyOthelloPlayer(g).play
-hp = HumanOthelloPlayer(g).play
-sp = SimplePlayer(g).play
-scp = SingleCorePlayer(g).play
-
-
 # nnet players
 class NNetPlayer:
     def __init__(self, game, args, chkpt):
@@ -41,27 +31,40 @@ class NNetPlayer:
         return np.argmax(self.mcts.getActionProb(board, temp=0))
 
 
-def chkptpit(max_iter=1000, num_games=20):
-    players = {
-        "random": rp,
-        "greedy": gp,
-        "alphabeta-simple": sp,
-        "alphabeta-strategy": scp,
-    }
+def chkptpit(game, players, max_iter=1000, num_games=20):
+
 
     for i in range(1, max_iter):
         path = f"temp/checkpoint_{i}.pth.tar"
         if not os.path.exists(path):
             log.info("All iterations are done now.")
             break
-        chkpt = path.split("/")
-        args = dotdict({'numMCTSSims': 50, 'cpuct': 1.0})
-        player1 = NNetPlayer(g, args, chkpt).play
-        desc1 = f"nnet-50_{i}"
         for desc2, player2 in players.items():
-            arena = Arena.Arena(player1, player2, g, display=OthelloGame.display)
+            # I personally think we should clear the tree after pitting with a particular player
+            chkpt = path.split("/")
+            args = dotdict({'numMCTSSims': 50, 'cpuct': 1.0})
+            player1 = NNetPlayer(game, args, chkpt).play
+            desc1 = f"nnet-50_{i}"
+            arena = Arena.Arena(player1, player2, game, display=OthelloGame.display)
             log.info(f"{desc1} vs {desc2}")
-            log.info(arena.playGames(num_games, display_result=True))
+            log.info(arena.playGames(num_games))
 
+def main():
+    g = OthelloGame(6)
 
-chkptpit()
+    # all players
+    rp = RandomPlayer(g).play
+    gp = GreedyOthelloPlayer(g).play
+    hp = HumanOthelloPlayer(g).play
+    sp = SimplePlayer(g).play
+    scp = SingleCorePlayer(g).play
+    players = {
+        "random": rp,
+        "greedy": gp,
+        "alphabeta-simple": sp,
+        "alphabeta-strategy": scp,
+    }
+    chkptpit(g, players)
+
+if __name__ == "__main__":
+    main()
