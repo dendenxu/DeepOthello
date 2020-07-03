@@ -27,7 +27,7 @@ class Arena():
         self.game = game
         self.display = display
 
-    def playGame(self, verbose=False):
+    def playGame(self, verbose=False, display_result=False):
         """
         Executes one episode of a game.
 
@@ -56,7 +56,7 @@ class Arena():
                 log.debug(f'valids = {valids}')
                 assert valids[action] > 0
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
-        if verbose:
+        if display_result:
             assert self.display
             print("Game over: Turn ", str(it), "Result ", str(self.game.getGameEnded(board, 1)))
             self.display(board)
@@ -71,8 +71,7 @@ class Arena():
         else:
             draws += 1
 
-
-    def playGamesMultiCore(self, num ,verbose=False):
+    def playGamesMultiCore(self, num, verbose=False):
         """
         Plays num games in which player1 starts num/2 games and player2 starts
         num/2 games.
@@ -117,8 +116,7 @@ class Arena():
 
         return oneWon, twoWon, draws
 
-
-    def playGames(self, num, verbose=False):
+    def playGames(self, num, verbose=False, display_result=False):
         """
         Plays num games in which player1 starts num/2 games and player2 starts
         num/2 games.
@@ -134,7 +132,7 @@ class Arena():
         twoWon = 0
         draws = 0
         for _ in tqdm(range(num), desc="Arena.playGames (1)"):
-            gameResult = self.playGame(verbose=verbose)
+            gameResult = self.playGame(verbose=verbose, display_result=display_result)
             if gameResult == 1:
                 oneWon += 1
             elif gameResult == -1:
@@ -145,7 +143,7 @@ class Arena():
         self.player1, self.player2 = self.player2, self.player1
 
         for _ in tqdm(range(num), desc="Arena.playGames (2)"):
-            gameResult = self.playGame(verbose=verbose)
+            gameResult = self.playGame(verbose=verbose, display_result=display_result)
             if gameResult == -1:
                 oneWon += 1
             elif gameResult == 1:
